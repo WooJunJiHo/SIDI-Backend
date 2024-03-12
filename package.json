@@ -1,9 +1,15 @@
 {
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.17.0",
+    "axios": "^1.6.7",
+    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "http": "^0.0.1-security",
+    "kuromoji": "^0.1.2",
     "mysql": "^2.18.1",
+    "natural": "^6.11.1",
+    "puppeteer": "^22.0.0",
     "socket.io": "^4.7.4"
   }
 }
