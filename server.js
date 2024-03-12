@@ -34,7 +34,7 @@ setInterval(() => {
 
 
 scrapingFunction.scrapingBJ(connection);
-conditionTraining.conditionTraining();
+//conditionTraining.conditionTraining();
 
 
 
