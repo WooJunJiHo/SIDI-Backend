@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const scrapingFunction = require('./utils/scrapingAssets');
 
 //상태 분류 모델 로드
-const conditionTraining = require("./utils/conditionFilteringTraining")
+//const conditionTraining = require("./utils/conditionFilteringTraining")
 
 
 const app = express();

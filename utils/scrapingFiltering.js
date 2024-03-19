@@ -1,15 +1,15 @@
 // 제목에서 필터링할 단어들
-const filterKeywords = [
+const titleFilterKeywords = [
     //부속
-    '거치대', '충전기', '라이트닝', '케이블', '케이스', '필름',
+    '거치대', '충전기', '라이트닝', '케이블', '케이', '필름',
     '맥세이프', '8핀', '이어팟', '이어폰', 'usb', '어댑터', '강화유리',
-    'SD', '리더기', '수리', '도구', '박스',
+    'SD', '리더기', '도구', '박스',
 
     //부품
     '정품', '부품', '배터리', '액정', '스크린',
 
     //업자 키워드
-    '매입', '특가', '입고', '성지', '일괄', '재고', '전색상', '시리즈', '대여', '물량', '협찬',
+    '매입', '매장', '특가', '입고', '성지', '일괄', '재고', '전색상', '시리즈', '대여', '물량', '협찬',
 
     //교환글 키워드
     '교환', '교체', '교신',
@@ -21,6 +21,21 @@ const filterKeywords = [
     '쿠로미', '패스파인더', 'UAG', '오터박스',
 ];
 
+const infoFilterKeywords = [
+
+     //업자 키워드
+     '매입', '특가', '입고', '성지', '일괄', '재고', '전색상', '시리즈', '대여', '물량', '협찬', '사은품', '이벤트', '후기', '할인',
+ 
+     //교환글 키워드
+     '교환', '교체', '교신',
+ 
+     //구매글 키워드
+     '사요', '구해요', '삽니다',
+ 
+     //그 외
+     '쿠로미', '패스파인더', 'UAG', '오터박스',
+]
+
 
 
 //1차 분류 - 예외 데이터 필터링 (제목)
@@ -28,7 +43,7 @@ const filterKeywords = [
 
 exports.titleFiltering = function (data) {
     const filteredProducts = data.filter(item => {
-        const shouldExclude = filterKeywords.some(keyword =>
+        const shouldExclude = titleFilterKeywords.some(keyword =>
             item.title.includes(keyword)
         );
         return !shouldExclude;
@@ -44,8 +59,9 @@ exports.titleFiltering = function (data) {
 //2차 분류 - 예외 데이터 필터링 (게시글)
 
 exports.infoFiltering = function (data) {
+
     const filteredProducts = data.filter(item => {
-        const shouldExclude = filterKeywords.some(keyword =>
+        const shouldExclude = infoFilterKeywords.some(keyword =>
             item.info.includes(keyword)
         );
         return !shouldExclude;
@@ -55,7 +71,22 @@ exports.infoFiltering = function (data) {
 };
 
 
+//소문자 변환
+//소문자 변환
+exports.convertLowerCase = function (data) {
+    
+    const parseJSON = JSON.parse(JSON.stringify(data));
+    parseJSON.forEach(item => {
+        for (let key in item) {
+            if (typeof item[key] === 'string' && (key === 'title' || key === 'info')) {
+                item[key] = item[key].replace(/[A-Za-z]+/g, match => match.toLowerCase());
+            }
+        }
+    });
+    
+    return parseJSON;
 
+}
 
 
 

@@ -5,6 +5,7 @@
 #DB
 DB
 
+#모듈
 node_modules
 
 #모델 학습
