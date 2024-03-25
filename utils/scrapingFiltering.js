@@ -23,17 +23,17 @@ const titleFilterKeywords = [
 
 const infoFilterKeywords = [
 
-     //업자 키워드
-     '매입', '특가', '입고', '성지', '일괄', '재고', '전색상', '시리즈', '대여', '물량', '협찬', '사은품', '이벤트', '후기', '할인',
- 
-     //교환글 키워드
-     '교환', '교체', '교신',
- 
-     //구매글 키워드
-     '사요', '구해요', '삽니다',
- 
-     //그 외
-     '쿠로미', '패스파인더', 'UAG', '오터박스',
+    //업자 키워드
+    '매입', '특가', '입고', '성지', '일괄', '재고', '전색상', '시리즈', '대여', '물량', '협찬', '사은품', '이벤트', '후기', '할인',
+
+    //교환글 키워드
+    '교환', '교체', '교신',
+
+    //구매글 키워드
+    '사요', '구해요', '삽니다',
+
+    //그 외
+    '쿠로미', '패스파인더', 'UAG', '오터박스',
 ]
 
 
@@ -74,7 +74,7 @@ exports.infoFiltering = function (data) {
 //소문자 변환
 //소문자 변환
 exports.convertLowerCase = function (data) {
-    
+
     const parseJSON = JSON.parse(JSON.stringify(data));
     parseJSON.forEach(item => {
         for (let key in item) {
@@ -83,9 +83,26 @@ exports.convertLowerCase = function (data) {
             }
         }
     });
-    
+
     return parseJSON;
 
+}
+
+
+
+//상태 분류
+//상태 분류
+exports.conditionJSON = function processData(data, gptData) {
+    // 첫 번째 데이터 배열을 순회하면서 두 번째 데이터와 일치하는 제목을 가진 데이터에 condition 추가
+    data.forEach(data1 => {
+        const data2 = gptData.find(data2 => data2.title === data1.title);
+        if (data2) {
+            data1.condition = data2.condition;
+        }
+    });
+
+    //console.log(data);
+    return data;
 }
 
 

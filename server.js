@@ -2,12 +2,11 @@ const express = require('express');
 const http = require('http');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
+const axios = require('axios');
 
 //크롤링
 const scrapingFunction = require('./utils/scrapingAssets');
 
-//상태 분류 모델 로드
-//const conditionTraining = require("./utils/conditionFilteringTraining")
 
 
 const app = express();
@@ -29,18 +28,18 @@ connection.connect();
 
 //번개장터 크롤링 2시간 간격으로 주기적으로 실행
 setInterval(() => {
-    scrapingFunction.scrapingBJ(connection);
-}, 2 * 20 * 60 * 1000); // 2시간
+    scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY);
+}, 10 * 60 * 1000); // 2시간
 
 
-scrapingFunction.scrapingBJ(connection);
+scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY);
 //conditionTraining.conditionTraining();
 
 
 
 
-
-
+//특수문자 제거 
+//.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, '')
 
 
 
@@ -66,3 +65,5 @@ const port = process.env.REACT_APP_PORT || 3000;
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+

@@ -5,6 +5,9 @@ const filterFunction = require('./scrapingFiltering');
 const modelFilterFunction = require('./modelFiltering');
 const { filter } = require('../node_modules/cheerio/lib/api/traversing');
 
+//상태 분류
+const conditionFunction = require('./conditionFiltering');
+
 
 
 //번개장터 크롤링 순서
@@ -21,7 +24,7 @@ let timeSet = 1;
 
 
 
-exports.scrapingBJ = async function bunjang(mysql) {
+exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey) {
     console.log(`[${timeSet++} 회차] ` + new Date());
 
 
@@ -81,15 +84,35 @@ exports.scrapingBJ = async function bunjang(mysql) {
         const secondFiltered = filterFunction.infoFiltering(productDetails);
 
         console.log("2차 필터링 : " + secondFiltered.length)
-        console.log(secondFiltered)
+        //console.log(secondFiltered)
 
         //소문자 변환
         //소문자 변환
         const productData = filterFunction.convertLowerCase(secondFiltered);
         console.log('소문자 변환 : ' + productData.length)
-        console.log(productData)
 
-    
+
+
+
+        //GPT 상품 상태 분류
+        let response;
+
+        async function gptLoad() {
+            response = await conditionFunction.conditionFiltering(JSON.stringify(productData), axios, openaiApiKey)
+
+            // 대답이 없는 경우 재시도
+            if (!response) {
+                response = await conditionFunction.conditionFiltering(JSON.stringify(productData), axios, openaiApiKey)
+            } else {
+                //console.log(response)
+                //기존 배열에 상태 키 밸류 추가
+                const gptJSONData = filterFunction.conditionJSON(productData, response)
+                console.log('GPT3.5 Turbo Filtering OK!')
+                return gptJSONData;
+            }
+        }
+        const gptProductData = await gptLoad();
+
 
 
 
@@ -204,17 +227,17 @@ exports.scrapingBJ = async function bunjang(mysql) {
         const iPhone15NormalList = modelFilterFunction.normalFiltering(iPhone15List);
         // console.log("15 Normal 필터링 : " + iPhone15NormalList.length)
         // console.log(iPhone15NormalList)
-        
+
 
 
 
 
 
         // 데이터를 반복해서 데이터베이스에 삽입
-        productData.forEach(item => {
-            const { title, price, value, info } = item;
-            const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, VALUE, INFO, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const insertValues = [assetNameBJ, title, price, value, info.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, ''), '번개장터', new Date()];
+        gptProductData.forEach(item => {
+            const { title, price, info, condition } = item;
+            const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, INFO, CONDITIONS, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const insertValues = [assetNameBJ, title, price, info.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, ''), condition, '번개장터', new Date()];
 
             mysql.query(insertQuery, insertValues, (error, results, fields) => {
                 if (error) throw error;
@@ -223,8 +246,10 @@ exports.scrapingBJ = async function bunjang(mysql) {
         });
         await browser.close();
 
-        console.log('OK!');
+        console.log('MYSQL DB SAVE OK!');
     })();
+
+
 
 
 
@@ -244,15 +269,16 @@ exports.scrapingBJ = async function bunjang(mysql) {
                 // 상세 페이지에서 필요한 데이터 추출
                 const title = document.querySelector('.ProductSummarystyle__Name-sc-oxz0oy-4.gYcooF').textContent.trim();  // 제목에 해당하는 선택자로 수정
                 const price = parseInt(document.querySelector('.ProductSummarystyle__Price-sc-oxz0oy-6.dJuwUw').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
-                const value = document.querySelector('.ProductSummarystyle__Value-sc-oxz0oy-19.gXkArV').textContent.trim();
+                //const value = document.querySelector('.ProductSummarystyle__Value-sc-oxz0oy-19.gXkArV').textContent.trim();
                 const info = document.querySelector('.ProductInfostyle__DescriptionContent-sc-ql55c8-3.eJCiaL > p').textContent.trim();
 
-                return { title, price, value, info };
+                return { title, price, info };
             });
 
             return productDetail;
         } catch (error) {
-            console.error(`Error fetching product detail for pid ${pid}:`, error);
+            //console.error(`Error fetching product detail for pid ${pid}:`, error);
+            console.log('타임아웃 에러')
             return null;
         } finally {
             await page.close();
