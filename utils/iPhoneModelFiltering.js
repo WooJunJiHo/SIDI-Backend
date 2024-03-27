@@ -22,14 +22,18 @@ const plus = [ 'plus', 'PLUS', '플러스' ]
 
 
 
+
 //모델 넘버링 필터링
 //모델 넘버링 필터링
 
-exports.iPhoneSEFiltering = function (data) {
+const iPhoneSEFiltering = (data) => {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhoneSE.some(keyword => 
-            item.title.toLowerCase().includes(keyword)
+            item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 SE'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -37,11 +41,14 @@ exports.iPhoneSEFiltering = function (data) {
 
 
 
-exports.iPhone11Filtering = function (data) {
+const iPhone11Filtering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhone11.some(keyword => 
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 11'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -49,11 +56,14 @@ exports.iPhone11Filtering = function (data) {
 
 
 
-exports.iPhone12Filtering = function (data) {
+const iPhone12Filtering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhone12.some(keyword => 
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 12'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -61,11 +71,14 @@ exports.iPhone12Filtering = function (data) {
 
 
 
-exports.iPhone13Filtering = function (data) {
+const iPhone13Filtering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhone13.some(keyword => 
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 13'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -73,11 +86,14 @@ exports.iPhone13Filtering = function (data) {
 
 
 
-exports.iPhone14Filtering = function (data) {
+const iPhone14Filtering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhone14.some(keyword => 
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 14'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -85,11 +101,14 @@ exports.iPhone14Filtering = function (data) {
 
 
 
-exports.iPhone15Filtering = function (data) {
+const iPhone15Filtering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = iPhone15.some(keyword => 
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = '아이폰 15'
+        }
         return shouldInclude;
     });
     return filteredProducts
@@ -101,11 +120,14 @@ exports.iPhone15Filtering = function (data) {
 
 
 //맥스 필터링
-exports.maxFiltering = function (data) {
+const maxFiltering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = max.some(keyword =>
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = item.assetName + ' 맥스'
+        }
         return shouldInclude;
     });
     return filteredProducts;
@@ -114,7 +136,7 @@ exports.maxFiltering = function (data) {
 
 
 //프로 필터링
-exports.proFiltering = function (data) {
+const proFiltering = function (data) {
 
     const filterMax = data.filter(item => {
         const shouldExclude = max.some(keyword => 
@@ -127,6 +149,9 @@ exports.proFiltering = function (data) {
         const shouldInclude = pro.some(keyword =>
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = item.assetName + ' 프로'
+        }
         return shouldInclude;
     });
     return filteredProducts;
@@ -135,11 +160,14 @@ exports.proFiltering = function (data) {
 
 
 //플러스 필터링
-exports.plusFiltering = function (data) {
+const plusFiltering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = plus.some(keyword =>
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = item.assetName + ' 플러스'
+        }
         return shouldInclude;
     });
     return filteredProducts;
@@ -148,11 +176,14 @@ exports.plusFiltering = function (data) {
 
 
 //미니 필터링
-exports.miniFiltering = function (data) {
+const miniFiltering = function (data) {
     const filteredProducts = data.filter(item => {
         const shouldInclude = mini.some(keyword =>
             item.title.includes(keyword)
         );
+        if(shouldInclude === true) {
+            item.assetName = item.assetName + ' 미니'
+        }
         return shouldInclude;
     });
     return filteredProducts;
@@ -160,7 +191,7 @@ exports.miniFiltering = function (data) {
 
 
 //노멀 필터링
-exports.normalFiltering = function (data) {
+const normalFiltering = function (data) {
     const maxFiltering = data.filter(item => {
         const shouldExclude = max.some(keyword => 
             item.title.includes(keyword)
@@ -180,4 +211,53 @@ exports.normalFiltering = function (data) {
         return !shouldExclude;
     });
     return miniFiltering;
+}
+
+
+
+exports.iPhoneFiltering = function (data) {
+
+    const iPhoneSEList = iPhoneSEFiltering(data);
+
+    const iPhone11List = iPhone11Filtering(data);
+    const iPhone11MaxList = maxFiltering(iPhone11List);
+    const iPhone11ProList = proFiltering(iPhone11List);
+    const iPhone11NormalList = normalFiltering(iPhone11List);
+
+    const iPhone12List = iPhone12Filtering(data);
+    const iPhone12MaxList = maxFiltering(iPhone12List);
+    const iPhone12ProList = proFiltering(iPhone12List);
+    const iPhone12MiniList = miniFiltering(iPhone12List);
+    const iPhone12NormalList = normalFiltering(iPhone12List);
+
+
+    const iPhone13List = iPhone13Filtering(data);
+    const iPhone13MaxList = maxFiltering(iPhone13List);
+    const iPhone13ProList = proFiltering(iPhone13List);
+    const iPhone13MiniList = miniFiltering(iPhone13List);
+    const iPhone13NormalList = normalFiltering(iPhone13List);
+
+    const iPhone14List = iPhone14Filtering(data);
+    const iPhone14MaxList = maxFiltering(iPhone14List);
+    const iPhone14ProList = proFiltering(iPhone14List);
+    const iPhone14PlusList = plusFiltering(iPhone14List);
+    const iPhone14NormalList = normalFiltering(iPhone14List);
+
+    const iPhone15List = iPhone15Filtering(data);
+    const iPhone15MaxList = maxFiltering(iPhone15List);
+    const iPhone15ProList = proFiltering(iPhone15List);
+    const iPhone15PlusList = plusFiltering(iPhone15List);
+    const iPhone15NormalList = normalFiltering(iPhone15List);
+
+    const dataList = [
+        iPhoneSEList, 
+        iPhone11MaxList, iPhone11ProList, iPhone11NormalList,
+        iPhone12MaxList, iPhone12ProList, iPhone12MiniList, iPhone12NormalList,
+        iPhone13MaxList, iPhone13ProList, iPhone13MiniList, iPhone13NormalList,
+        iPhone14MaxList, iPhone14ProList, iPhone14PlusList, iPhone14NormalList,
+        iPhone15MaxList, iPhone15ProList, iPhone15PlusList, iPhone15NormalList,
+    ]
+
+    return dataList;
+
 }
