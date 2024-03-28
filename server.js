@@ -2,16 +2,15 @@ const express = require('express');
 const http = require('http');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
+const axios = require('axios');
 
 //크롤링
 const scrapingFunction = require('./utils/scrapingBJAssets');
 
-//상태 분류 모델 로드
-//const conditionTraining = require("./utils/conditionFilteringTraining")
 
 
 //번개장터 크롤링 아이템
-let assetNameBJ = '아이폰';
+let assetName = '아이폰';
 const iPhone = '아이폰';
 const galaxyS20 = '갤럭시S20'
 const galaxyS21 = '갤럭시S21'
@@ -40,22 +39,18 @@ connection.connect();
 
 //번개장터 크롤링 2시간 간격으로 주기적으로 실행
 setInterval(() => {
-
-    assetNameBJ = galaxyS23;
-
-    scrapingFunction.scrapingBJ(connection, assetNameBJ);
-
-}, 2 * 20 * 60 * 1000); // 2시간
+    scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+}, 10 * 60 * 1000); // 2시간
 
 
-scrapingFunction.scrapingBJ(connection, assetNameBJ);
+scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
 //conditionTraining.conditionTraining();
 
 
 
 
-
-
+//특수문자 제거 
+//.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, '')
 
 
 
@@ -81,3 +76,5 @@ const port = process.env.REACT_APP_PORT || 3000;
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+

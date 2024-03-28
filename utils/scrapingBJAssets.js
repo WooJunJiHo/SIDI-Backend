@@ -4,8 +4,11 @@ const puppeteer = require('puppeteer');
 const filterFunction = require('./scrapingFiltering');
 const iPhoneModelFilterFunction = require('./iPhoneModelFiltering');
 const galaxyModelFilterFunction = require('./galaxyModelFiltering');
-const { filter } = require('cheerio/lib/api/traversing');
+const { filter } = require('../node_modules/cheerio/lib/api/traversing');
 
+
+//상태 분류
+const conditionFunction = require('./conditionFiltering');
 
 
 //번개장터 크롤링 순서
@@ -20,11 +23,11 @@ let timeSet = 1;
 
 
 
-exports.scrapingBJ = async function bunjang(mysql, assetNameBJ) {
+exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetName) {
     console.log(`[${timeSet++} 회차] ` + new Date());
 
 
-    const url = `https://m.bunjang.co.kr/search/products?q=${assetNameBJ}`;
+    const url = `https://m.bunjang.co.kr/search/products?q=${assetName}`;
     const componentSelector = 'a.sc-jKVCRD.bqiLXa';  // 상품을 나타내는 클래스 선택자로 수정
 
     (async () => {
@@ -88,43 +91,73 @@ exports.scrapingBJ = async function bunjang(mysql, assetNameBJ) {
     
 
 
+        
+        let filteredList = null;
+
+
         //아이폰 필터링
         //아이폰 필터링
-        if(assetNameBJ === '갤럭시S20') {
-            const galaxyS20List = galaxyModelFilterFunction.galaxyS20Filtering(productData);
-            console.log('갤럭시S20 필터링 : ' + galaxyS20List.length)
+        if(assetName === '갤럭시S20') {
+            filteredList = galaxyModelFilterFunction.galaxyS20Filtering(productData);
+            console.log('갤럭시S20 필터링 : ' + filteredList.length)
             //console.log(galaxyS20List)
-        } else if (assetNameBJ === '갤럭시S21'){
-            const galaxyS21List = galaxyModelFilterFunction.galaxyS21Filtering(productData);
-            console.log('갤럭시S21 필터링 : ' + galaxyS21List.length)
+        } else if (assetName === '갤럭시S21'){
+            filteredList = galaxyModelFilterFunction.galaxyS21Filtering(productData);
+            console.log('갤럭시S21 필터링 : ' + filteredList.length)
             //console.log(galaxyS21List)
-        } else if (assetNameBJ === '갤럭시S22'){
-            const galaxyS22List = galaxyModelFilterFunction.galaxyS22Filtering(productData);
-            console.log('갤럭시S22 필터링 : ' + galaxyS22List.length)
+        } else if (assetName === '갤럭시S22'){
+            filteredList = galaxyModelFilterFunction.galaxyS22Filtering(productData);
+            console.log('갤럭시S22 필터링 : ' + filteredList.length)
             //console.log(galaxyS22List)
-        } else if (assetNameBJ === '갤럭시S23'){
-            const galaxyS23List = galaxyModelFilterFunction.galaxyS23Filtering(productData);
-            console.log('갤럭시S23 필터링 : ' + galaxyS23List.length)
+        } else if (assetName === '갤럭시S23'){
+            filteredList = galaxyModelFilterFunction.galaxyS23Filtering(productData);
+            console.log('갤럭시S23 필터링 : ' + filteredList.length)
             //console.log(galaxyS23List)
-        } else if (assetNameBJ === '갤럭시 S24'){
-            const galaxyS24List = galaxyModelFilterFunction.galaxyS24Filtering(productData);
-            console.log('갤럭시S24 필터링 : ' + galaxyS24List.length)
+        } else if (assetName === '갤럭시 S24'){
+            filteredList = galaxyModelFilterFunction.galaxyS24Filtering(productData);
+            console.log('갤럭시S24 필터링 : ' + filteredList.length)
             //console.log(galaxyS24List)
         } else {
-            const iPhoneList = iPhoneModelFilterFunction.iPhoneFiltering(productData);
-            console.log('아이폰 필터링 : ' + iPhoneList.length)
+            filteredList = iPhoneModelFilterFunction.iPhoneFiltering(productData);
+            console.log('아이폰 필터링 : ' + filteredList.length)
             //console.log(iPhoneList)
         }
 
+        console.log(filteredList.length)
 
+
+        //GPT 상품 상태 분류
+        let response;
+
+        async function gptLoad() {
+            response = await conditionFunction.conditionFiltering(JSON.stringify(filteredList), axios, openaiApiKey)
+
+            // 대답이 없는 경우 재시도
+            if (!response) {
+                response = await conditionFunction.conditionFiltering(JSON.stringify(filteredList), axios, openaiApiKey)
+            } else {
+                //console.log(response)
+                //기존 배열에 상태 키 밸류 추가
+                const gptJSONData = filterFunction.conditionJSON(filteredList, response)
+                console.log('GPT3.5 Turbo Filtering OK!')
+                return gptJSONData;
+            }
+        }
+        const gptProductData = await gptLoad();
+
+        console.log(gptProductData.length)
+        //console.log(gptProductData)
+
+        const saveData = filterFunction.deleteNullValue(gptProductData);
+        console.log(saveData.length)
 
 
 
         // 데이터를 반복해서 데이터베이스에 삽입
-        productData.forEach(item => {
-            const { title, price, value, info, assetName } = item;
-            const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, VALUE, INFO, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const insertValues = [assetName, title, price, value, info.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, ''), '번개장터', new Date()];
+        saveData.forEach(item => {
+            const { title, price, info, condition, assetName } = item;
+            const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, INFO, CONDITIONS, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const insertValues = [assetName, title, price, info.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, ''), condition, '번개장터', new Date()];
 
             mysql.query(insertQuery, insertValues, (error, results, fields) => {
                 if (error) throw error;
@@ -133,7 +166,7 @@ exports.scrapingBJ = async function bunjang(mysql, assetNameBJ) {
         });
         await browser.close();
 
-        console.log('OK!');
+        console.log('MYSQL DB SAVE OK!');
     })();
 
 

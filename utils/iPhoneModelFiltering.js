@@ -249,14 +249,18 @@ exports.iPhoneFiltering = function (data) {
     const iPhone15PlusList = plusFiltering(iPhone15List);
     const iPhone15NormalList = normalFiltering(iPhone15List);
 
-    const dataList = [
+    const filteredList = [];
+
+    const combinedList = filteredList.concat(
         iPhoneSEList, 
         iPhone11MaxList, iPhone11ProList, iPhone11NormalList,
         iPhone12MaxList, iPhone12ProList, iPhone12MiniList, iPhone12NormalList,
         iPhone13MaxList, iPhone13ProList, iPhone13MiniList, iPhone13NormalList,
         iPhone14MaxList, iPhone14ProList, iPhone14PlusList, iPhone14NormalList,
-        iPhone15MaxList, iPhone15ProList, iPhone15PlusList, iPhone15NormalList,
-    ]
+        iPhone15MaxList, iPhone15ProList, iPhone15PlusList, iPhone15NormalList
+    );
+
+    const dataList = combinedList.filter(item => item !== null);
 
     return dataList;
 
