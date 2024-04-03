@@ -1,9 +1,12 @@
+//상태 분류
+const conditionFunction = require('./conditionFiltering');
+
 // 제목에서 필터링할 단어들
 const titleFilterKeywords = [
     //부속
     '거치대', '충전기', '라이트닝', '케이블', '케이', '필름',
     '맥세이프', '8핀', '이어팟', '이어폰', 'usb', '어댑터', '강화유리',
-    'SD', '리더기', '도구', '박스',
+    'SD', '리더기', '도구', '박스', '애플펜슬', '키보드',
 
     //부품
     '정품', '부품', '배터리', '액정', '스크린',
@@ -18,7 +21,7 @@ const titleFilterKeywords = [
     '사요', '구해요', '삽니다', '구매',
 
     //그 외
-    '쿠로미', '패스파인더', 'UAG', '오터박스',
+    '쿠로미', '패스파인더', 'UAG', '오터박스', '에어팟', '셀카봉', '고프로', '가방', '파우치', 
 ];
 
 const infoFilterKeywords = [
@@ -113,10 +116,11 @@ exports.conditionJSON = function processData(data, gptData) {
 exports.deleteNullValue = function (data) {
     
     const filteredData = data.filter(item => {
-        if(item.title !== null && item.price !== null && item.info !== null && item.condition !== null) {
-            return item;
+        
+        if (item.condition === null || item.condition === undefined) {
+            return false;
         } else {
-            return null;
+            return item;
         }
     })
 

@@ -14,24 +14,17 @@ const { filter } = require('../node_modules/cheerio/lib/api/traversing');
 const conditionFunction = require('./conditionFiltering');
 
 
-//번개장터 크롤링 순서
-//1. 번개장터 검색 후 1페이지 100개 상품 제목과 pid 크롤링
-//2. 제목 필터링
-//2-1. 평균가 필터링
-//3. 남은 pid에 해당하는 페이지 로드 후 게시글 크롤링 
-//4. 게시글 필터링
+
 
 
 let timeSet = 1;
 
+exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName) {
 
+    console.log('중고나라 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
 
-exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetName) {
-    console.log('번개장터 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
-
-
-    const url = `https://m.bunjang.co.kr/search/products?q=${assetName}`;
-    const componentSelector = 'a.sc-jKVCRD.bqiLXa';  // 상품을 나타내는 클래스 선택자로 수정
+    const url = `https://web.joongna.com/search/${assetName}`;
+    const componentSelector = 'a.group.flex.rounded-md.cursor-pointer.flex-col.items-start.transition.bg-white';  // 상품을 나타내는 클래스 선택자로 수정
 
     (async () => {
         const browser = await puppeteer.launch();
@@ -41,19 +34,19 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         // 페이지가 로드될 때까지 대기
         await page.waitForSelector(componentSelector);
 
-        // A 컴포넌트의 data-pid 값, 제목, 가격 가져오기
+       // A 컴포넌트의 data-pid 값, 제목, 가격 가져오기
         const data = await page.evaluate((selector) => {
-            const productElements = document.querySelectorAll(selector);
-            const productsData = [];
+        const productElements = document.querySelectorAll(selector);
+        const productsData = [];
 
             for (const productElement of productElements) {
-                const pid = productElement.getAttribute('data-pid');
-                const title = productElement.querySelector('.sc-iBEsjs.fqRSdX').textContent.trim();
-                const price = parseInt(productElement.querySelector('.sc-hzNEM.bmEaky').textContent.trim().replace(/,/gi, ''));
-                const location = productElement.querySelector('.sc-chbbiW.ncXbJ').textContent.trim();
+                const pid = productElement.getAttribute('href').replace('/product/', '');
+                const title = productElement.querySelector('h2.line-clamp-2.text-sm.md\\:text-base.text-heading').textContent.trim();
+                const price = parseInt(productElement.querySelector('.font-semibold.space-s-2.mt-0\\.5.text-heading.lg\\:text-lg.lg\\:mt-1\\.5').textContent.trim().replace(/,/gi, ''));
+                const location = productElement.querySelector('.text-sm.text-gray-400').textContent.trim();
 
                 productsData.push({ pid, title, price, location });
-            }
+                }
 
             return productsData;
         }, componentSelector);
@@ -64,23 +57,20 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         //1차 분류 - 예외 데이터 필터링 (제목)
         const firstFiltered = filterFunction.titleFiltering(data)
 
-
         console.log("1차 필터링 : " + firstFiltered.length);
 
-        //평균가 필터링 함수 위치
 
+         // 각 pid에 대해 순차적으로 상세 설명 페이지에 들어가 데이터 가져오기
+         const productDetails = [];
+         for (const product of firstFiltered) {
+             const pid = product.pid;
+             const productDetail = await getProductDetail(pid, browser);
+             if (productDetail) {
+                 productDetails.push(productDetail);
+             }
+         }
 
-        // 각 pid에 대해 순차적으로 상세 설명 페이지에 들어가 데이터 가져오기
-        const productDetails = [];
-        for (const product of firstFiltered) {
-            const pid = product.pid;
-            const productDetail = await getProductDetail(pid, browser);
-            if (productDetail) {
-                productDetails.push(productDetail);
-            }
-        }
-
-
+        
         //2차 분류 - 예외 데이터 필터링 (게시글)
         //2차 분류 - 예외 데이터 필터링 (게시글)
         const secondFiltered = filterFunction.infoFiltering(productDetails);
@@ -91,10 +81,8 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         //소문자 변환
         const productData = filterFunction.convertLowerCase(secondFiltered);
         console.log('소문자 변환 : ' + productData.length)
-    
 
 
-        
         let filteredList = null;
 
 
@@ -138,8 +126,9 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
             //console.log(iPadList)
         }
 
-        console.log(filteredList.length)
+        console.log('필터링 결과 : ' + filteredList.length)
         console.log(filteredList)
+
 
 
         //GPT 상품 상태 분류
@@ -173,41 +162,40 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         saveData.forEach(item => {
             const { title, price, info, condition, assetName } = item;
             const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, INFO, CONDITIONS, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const insertValues = [assetName, title, price, info.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, ''), condition, '번개장터', new Date()];
+            const insertValues = [assetName, title, price, info.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, ''), condition, '중고나라', new Date()];
 
             mysql.query(insertQuery, insertValues, (error, results, fields) => {
                 if (error) throw error;
                 //console.log('Data inserted:', results);
             });
         });
-
         await browser.close();
 
         console.log('MYSQL DB SAVE OK!');
-    })();
 
+
+    })();
 
 
     //해당 pid의 상세 페이지 크롤링 코드
     async function getProductDetail(pid, browser) {
         const page = await browser.newPage();
-        const productDetailUrl = `https://m.bunjang.co.kr/products/${pid}`;
+        const productDetailUrl = `https://web.joongna.com/product/${pid}`;
 
         try {
             await page.goto(productDetailUrl);
 
             // 페이지가 로드될 때까지 대기
-            await page.waitForSelector('.ProductSummarystyle__Name-sc-oxz0oy-4.gYcooF');  // 실제 상세 페이지의 선택자로 수정
+            await page.waitForSelector('.px-5');  // 실제 상세 페이지의 선택자로 수정
 
             // 필요한 데이터를 추출하거나 다른 작업 수행
             const productDetail = await page.evaluate(() => {
                 // 상세 페이지에서 필요한 데이터 추출
-                const title = document.querySelector('.ProductSummarystyle__Name-sc-oxz0oy-4.gYcooF').textContent.trim();  // 제목에 해당하는 선택자로 수정
-                const price = parseInt(document.querySelector('.ProductSummarystyle__Price-sc-oxz0oy-6.dJuwUw').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
-                const value = document.querySelector('.ProductSummarystyle__Value-sc-oxz0oy-19.gXkArV').textContent.trim();
-                const info = document.querySelector('.ProductInfostyle__DescriptionContent-sc-ql55c8-3.eJCiaL > p').textContent.trim();
+                const title = document.querySelector('.mr-2').textContent.trim();  // 제목에 해당하는 선택자로 수정
+                const price = parseInt(document.querySelector('div.text-heading').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
+                const info = document.querySelector('p.text-jnGray-900').textContent.trim();
 
-                return { title, price, value, info };
+                return { title, price, info };
             });
 
             return productDetail;
@@ -218,4 +206,6 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
             await page.close();
         }
     }
+   
+
 }

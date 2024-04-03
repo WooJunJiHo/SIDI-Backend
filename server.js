@@ -5,18 +5,25 @@ const dotenv = require('dotenv');
 const axios = require('axios');
 
 //크롤링
-const scrapingFunction = require('./utils/scrapingBJAssets');
+const scrapingBJFunction = require('./utils/scrapingBJAssets');
+const scrapingJNFunction = require('./utils/scrapingJNAssets');
+const scrapingDGFunction = require('./utils/scrapingDGAssets');
 
 
 
 //번개장터 크롤링 아이템
-let assetName = '아이폰';
+let assetName = '맥북';
 const iPhone = '아이폰';
 const galaxyS20 = '갤럭시S20'
 const galaxyS21 = '갤럭시S21'
 const galaxyS22 = '갤럭시S22'
 const galaxyS23 = '갤럭시S23'
 const galaxyS24 = '갤럭시S24'
+const galaxyZ = '갤럭시Z'
+
+const iPad = '아이패드';
+
+const macBook = '맥북'
 
 
 
@@ -38,14 +45,28 @@ connection.connect();
 
 
 //번개장터 크롤링 2시간 간격으로 주기적으로 실행
-setInterval(() => {
-    scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
-}, 10 * 60 * 1000); // 2시간
+// setInterval(() => {
+//     scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+// }, 10 * 60 * 1000); // 2시간
 
 
-scrapingFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+//번개장터
+//번개장터
+//scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
 //conditionTraining.conditionTraining();
 
+
+
+//중고나라
+//중고나라
+//scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+
+
+
+
+//당근마켓
+//당근마켓
+scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 

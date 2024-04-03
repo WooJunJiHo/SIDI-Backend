@@ -126,7 +126,7 @@ const maxFiltering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = item.assetName + ' 맥스'
+            item.assetName = item.assetName + ' 프로 맥스'
         }
         return shouldInclude;
     });
