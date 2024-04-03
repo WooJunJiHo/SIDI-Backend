@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
-const axios = require('axios');
+const bodyParser = require('body-parser');
 
 //크롤링
 const scrapingBJFunction = require('./utils/scrapingBJAssets');
@@ -29,6 +29,8 @@ const macBook = '맥북'
 
 const app = express();
 const server = http.createServer(app);
+// JSON 파싱을 위한 미들웨어 추가
+app.use(bodyParser.json());
 
 dotenv.config(); // dotenv를 사용하여 환경 변수 로드 (env)
 
@@ -89,6 +91,59 @@ app.get('/getInfo', (req, res) => {
     connection.query('SELECT * FROM AssetsMoreInfo', (error, results, fields) => {
         if (error) throw error;
         res.json(results);
+    });
+});
+
+// 로그인 확인
+app.post('/fetchLogin', (req, res) => {
+    const { nickname, email, profileImg } = req.body;
+
+    // 가입 확인
+    connection.query(`SELECT * FROM User WHERE EMAIL=${mysql.escape(email)}`, (error, results, fields) => {
+        if (error) {
+            throw error;
+        }
+        
+        if (results.length > 0) {
+            // 계정이 존재하는 경우
+            res.json({ nickname, email, profileImg, userID: results[0].UserID });
+        } else {
+            // 계정이 존재하지 않는 경우 회원가입 진행
+            const insertQuery = 'INSERT INTO User (NICKNAME, EMAIL, ProfileImage, DATE) VALUES (?, ?, ?, ?)';
+            const insertValues = [nickname, email, profileImg, new Date()];
+
+            connection.query(insertQuery, insertValues, (error, results, fields) => {
+                if (error) {
+                    throw error;
+                }
+                // 회원가입 완료 응답
+                res.json('회원가입 완료');
+            });
+        }
+    });
+});
+
+//자산 로드
+app.post('/fetchUserAssets', (req, res) => {
+    const { nickname, email, profileImg } = req.body;
+
+    //아이디값 확인
+    connection.query(`SELECT * FROM User WHERE EMAIL=${mysql.escape(email)}`, (error, results, fields) => {
+        if (error) {
+            throw error;
+        }
+
+        if (results.length > 0) {
+            // 계정이 존재하는 경우
+            connection.query(`SELECT * FROM Assets WHERE UserID=${results[0].UserID}`, (error, results, fields) => {
+                if (error) throw error;
+                res.json(results);
+            });
+
+        } else {
+            // 계정이 존재하지 않는 경우
+            res.json('데이터 로드 실패! 로그인을 해주세요')
+        }
     });
 });
 
