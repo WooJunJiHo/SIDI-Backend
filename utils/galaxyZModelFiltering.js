@@ -30,7 +30,7 @@ const flip1Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 플립 1'
+            item.assetName = 'Galaxy Z Filp 1'
         }
         return shouldInclude;
     });
@@ -52,7 +52,7 @@ const flip2Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 플립 2'
+            item.assetName = 'Galaxy Z Filp 2'
         }
         return shouldInclude;
     });
@@ -74,7 +74,7 @@ const flip3Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 플립 3'
+            item.assetName = 'Galaxy Z Filp 3'
         }
         return shouldInclude;
     });
@@ -96,7 +96,7 @@ const flip4Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 플립 4'
+            item.assetName = 'Galaxy Z Filp 4'
         }
         return shouldInclude;
     });
@@ -118,7 +118,7 @@ const flip5Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 플립 5'
+            item.assetName = 'Galaxy Z Filp 5'
         }
         return shouldInclude;
     });
@@ -143,7 +143,7 @@ const fold1Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 폴드 1'
+            item.assetName = 'Galaxy Z Fold 1'
         }
         return shouldInclude;
     });
@@ -165,7 +165,7 @@ const fold2Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 폴드 2'
+            item.assetName = 'Galaxy Z Fold 2'
         }
         return shouldInclude;
     });
@@ -187,7 +187,7 @@ const fold3Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 폴드 3'
+            item.assetName = 'Galaxy Z Fold 3'
         }
         return shouldInclude;
     });
@@ -209,7 +209,7 @@ const fold4Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 폴드 4'
+            item.assetName = 'Galaxy Z Fold 4'
         }
         return shouldInclude;
     });
@@ -231,7 +231,7 @@ const fold5Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 Z 폴드 5'
+            item.assetName = 'Galaxy Z Fold 5'
         }
         return shouldInclude;
     });

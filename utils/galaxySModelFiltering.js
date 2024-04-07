@@ -25,7 +25,7 @@ const galaxyS20Filtering =  function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 S20'
+            item.assetName = 'Galaxy S20'
         }
         return shouldInclude;
     });
@@ -39,7 +39,7 @@ const galaxyS21Filtering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 S21'
+            item.assetName = 'Galaxy S21'
         }
         return shouldInclude;
     });
@@ -53,7 +53,7 @@ const galaxyS22Filtering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 S22'
+            item.assetName = 'Galaxy S22'
         }
         return shouldInclude;
     })
@@ -67,7 +67,7 @@ const galaxyS23Filtering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 S23'
+            item.assetName = 'Galaxy S23'
         }
         return shouldInclude;
     })
@@ -81,7 +81,7 @@ const galaxyS24Filtering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = '갤럭시 S24'
+            item.assetName = 'Galaxy S24'
         }
         return shouldInclude;
     })
@@ -100,7 +100,7 @@ const ultraFiltering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = item.assetName + ' 울트라'
+            item.assetName = item.assetName + ' Ultra'
         }
         return shouldInclude;
     })
@@ -117,7 +117,7 @@ const plusFiltering = function (data) {
             item.title.includes(keyword)
         )
         if(shouldInclude === true) {
-            item.assetName = item.assetName + ' 플러스'
+            item.assetName = item.assetName + ' Plus'
         }
         return shouldInclude;
     })
@@ -167,77 +167,87 @@ const normalFiltering = function (data) {
 
 }
 
-
-
 exports.galaxyS20Filtering = function (data) {
 
-    const galaxyS20List = galaxyS20Filtering(data);
-    const galaxyS20feList = feFiltering(galaxyS20List);
-    const galaxyS20PlusList = plusFiltering(galaxyS20List);
-    const galaxyS20UltraList = ultraFiltering(galaxyS20List);
+    const galaxyS20List = galaxyS20Filtering(data)
 
-    const list = [
-        galaxyS20feList, galaxyS20PlusList, galaxyS20UltraList
-    ]
+    const galaxyS20UltraList = ultraFiltering(galaxyS20List)
+    const galaxyS20PlusList = plusFiltering(galaxyS20List)
+    const galaxyS20FeList = feFiltering(galaxyS20List)
+    const galaxyS20NormalList = normalFiltering(galaxyS20List)
 
-    return list;
+    const filteredList = [];
+    const combinedList = filteredList.concat(galaxyS20UltraList, galaxyS20PlusList, galaxyS20FeList, galaxyS20NormalList)
+    const dataList = combinedList.filter(item => item !== null);
+
+    return dataList;
 
 }
+
 
 exports.galaxyS21Filtering = function (data) {
 
-    const galaxyS21List = galaxyS21Filtering(data);
-    const galaxyS21PlusList = plusFiltering(galaxyS21List);
-    const galaxyS21UltraList = ultraFiltering(galaxyS21List);
-    const galaxyS21NormalList = normalFiltering(galaxyS21List);
+    const galaxyS21List = galaxyS21Filtering(data)
 
-    const list = [
-        galaxyS21PlusList, galaxyS21UltraList, galaxyS21NormalList
-    ]
+    const galaxyS21UltraList = ultraFiltering(galaxyS21List)
+    const galaxyS21PlusList = plusFiltering(galaxyS21List)
+    const galaxyS21NormalList = normalFiltering(galaxyS21List)
 
-    return list
+    const filteredList = [];
+    const combinedList = filteredList.concat(galaxyS21UltraList, galaxyS21PlusList, galaxyS21NormalList)
+    const dataList = combinedList.filter(item => item !== null);
+
+    return dataList;
 
 }
+
 
 exports.galaxyS22Filtering = function (data) {
 
-    const galaxyS22List = galaxyS22Filtering(data);
-    const galaxyS22PlusList = plusFiltering(galaxyS22List);
-    const galaxyS22UltraList = ultraFiltering(galaxyS22List);
-    const galaxyS22NormalList = normalFiltering(galaxyS22List);
+    const galaxyS22List = galaxyS22Filtering(data)
 
-    const list = [
-        galaxyS22PlusList, galaxyS22UltraList, galaxyS22NormalList
-    ]
+    const galaxyS22UltraList = ultraFiltering(galaxyS22List)
+    const galaxyS22PlusList = plusFiltering(galaxyS22List)
+    const galaxyS22NormalList = normalFiltering(galaxyS22List)
 
-    return list;
+    const filteredList = [];
+    const combinedList = filteredList.concat(galaxyS22UltraList, galaxyS22PlusList, galaxyS22NormalList)
+    const dataList = combinedList.filter(item => item !== null);
+
+    return dataList;
 
 }
+
 
 exports.galaxyS23Filtering = function (data) {
 
-    const galaxyS23List = galaxyS23Filtering(data);
-    const galaxyS23PlusList = plusFiltering(galaxyS23List);
-    const galaxyS23UltraList = ultraFiltering(galaxyS23List);
+    const galaxyS23List = galaxyS23Filtering(data)
 
-    const list = [
-        galaxyS23PlusList, galaxyS23UltraList
-    ]
+    const galaxyS23UltraList = ultraFiltering(galaxyS23List)
+    const galaxyS23PlusList = plusFiltering(galaxyS23List)
+    const galaxyS23NormalList = normalFiltering(galaxyS23List)
 
-    return list;
+    const filteredList = [];
+    const combinedList = filteredList.concat(galaxyS23UltraList, galaxyS23PlusList, galaxyS23NormalList)
+    const dataList = combinedList.filter(item => item !== null);
+
+    return dataList;
 
 }
 
-exports.galaxyS24Filtering = function (data) {
 
-    const galaxyS24List = galaxyS24Filtering(data);
-    const galaxyS24PlusList = plusFiltering(galaxyS24List);
-    const galaxyS24UltraList = ultraFiltering(galaxyS24List);
+exports.galaxyS22Filtering = function (data) {
 
-    const list = [
-        galaxyS24PlusList, galaxyS24UltraList
-    ]
+    const galaxyS24List = galaxyS24Filtering(data)
 
-    return list;
+    const galaxyS24UltraList = ultraFiltering(galaxyS24List)
+    const galaxyS24PlusList = plusFiltering(galaxyS24List)
+    const galaxyS24NormalList = normalFiltering(galaxyS24List)
+
+    const filteredList = [];
+    const combinedList = filteredList.concat(galaxyS24UltraList, galaxyS24PlusList, galaxyS24NormalList)
+    const dataList = combinedList.filter(item => item !== null);
+
+    return dataList;
 
 }

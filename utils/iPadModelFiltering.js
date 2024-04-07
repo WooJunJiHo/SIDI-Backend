@@ -19,7 +19,7 @@ const iPadModelFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = '아이패드'
+            item.assetName = 'iPad'
         }
         return shouldInclude;
     });
@@ -37,7 +37,7 @@ const proFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 프로'
+            item.assetName = item.assetName + ' Pro'
         }
         return shouldInclude;
     });
@@ -53,7 +53,7 @@ const airFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 에어'
+            item.assetName = item.assetName + ' Air'
         }
         return shouldInclude;
     });
@@ -67,7 +67,7 @@ const miniFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 미니'
+            item.assetName = item.assetName + ' Mini'
         }
         return shouldInclude;
     });
@@ -102,7 +102,7 @@ const normalFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 10세대'
+            item.assetName = item.assetName + ' 10th Gen'
         }
         return shouldInclude;
     })
@@ -129,7 +129,7 @@ const generationTwo = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 2세대'
+                item.assetName = item.assetName + ' 2nd Gen'
             }
             return shouldInclude;
         } else {
@@ -137,7 +137,7 @@ const generationTwo = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 2세대'
+                item.assetName = item.assetName + ' 2nd Gen'
             }
             return shouldInclude;
         }
@@ -161,7 +161,7 @@ const generationThree = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 3세대'
+                item.assetName = item.assetName + ' 3rd Gen'
             }
             return shouldInclude;
         } else {
@@ -169,7 +169,7 @@ const generationThree = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 3세대'
+                item.assetName = item.assetName + ' 3rd Gen'
             }
             return shouldInclude;
         }
@@ -193,7 +193,7 @@ const generationFour = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 4세대'
+                item.assetName = item.assetName + ' 4th Gen'
             }
             return shouldInclude;
         } else {
@@ -201,7 +201,7 @@ const generationFour = function (data) {
                 item.title.includes(keyword)
             );
             if(shouldInclude === true) {
-                item.assetName = item.assetName + ' 4세대'
+                item.assetName = item.assetName + ' 4th Gen'
             }
             return shouldInclude;
         }
@@ -224,7 +224,7 @@ const generationFive = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 5세대'
+            item.assetName = item.assetName + ' 5th Gen'
         }
         return shouldInclude;
     });
@@ -246,7 +246,7 @@ const generationSix = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 6세대'
+            item.assetName = item.assetName + ' 6th Gen'
         }
         return shouldInclude;
     });
@@ -263,7 +263,7 @@ const pro11Inch = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 11인치'
+            item.assetName = item.assetName + ' 11Inch'
         }
         return shouldInclude;
     });
@@ -277,7 +277,7 @@ const pro12Inch = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 12.9인치'
+            item.assetName = item.assetName + ' 12.9Inch'
         }
         return shouldInclude;
     });

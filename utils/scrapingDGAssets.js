@@ -7,7 +7,7 @@ const galaxyModelFilterFunction = require('./galaxySModelFiltering');
 const galaxyZModelFilterFunction = require('./galaxyZModelFiltering');
 const iPadModelFilterFunction = require('./iPadModelFiltering');
 const macBookModelFilterFunction = require('./macBookModelFiltering');
-const { filter } = require('../node_modules/cheerio/lib/api/traversing');
+const { filter, first } = require('../node_modules/cheerio/lib/api/traversing');
 
 
 //상태 분류
@@ -19,12 +19,12 @@ const conditionFunction = require('./conditionFiltering');
 
 let timeSet = 1;
 
-exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName) {
+exports.scrapingDG = async function jungna(mysql, axios, openaiApiKey, assetName) {
 
-    console.log('중고나라 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
+    console.log('당근마켓 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
 
-    const url = `https://web.joongna.com/search/${assetName}`;
-    const componentSelector = 'a.group.flex.rounded-md.cursor-pointer.flex-col.items-start.transition.bg-white';  // 상품을 나타내는 클래스 선택자로 수정
+    const url = `https://www.daangn.com/search/${assetName}/`;
+    const componentSelector = '.flea-market-article-link';  // 상품을 나타내는 클래스 선택자로 수정
 
     (async () => {
         const browser = await puppeteer.launch();
@@ -40,10 +40,10 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         const productsData = [];
 
             for (const productElement of productElements) {
-                const pid = productElement.getAttribute('href').replace('/product/', '');
-                const title = productElement.querySelector('h2.line-clamp-2.text-sm.md\\:text-base.text-heading').textContent.trim();
-                const price = parseInt(productElement.querySelector('.font-semibold.space-s-2.mt-0\\.5.text-heading.lg\\:text-lg.lg\\:mt-1\\.5').textContent.trim().replace(/,/gi, ''));
-                const location = productElement.querySelector('.text-sm.text-gray-400').textContent.trim();
+                const pid = productElement.getAttribute('href').replace('/articles/', '');
+                const title = productElement.querySelector('.article-title').textContent.trim();
+                const price = parseInt(productElement.querySelector('.article-price').textContent.trim().replace(/,/gi, ''));
+                const location = productElement.querySelector('.article-region-name').textContent.trim();
 
                 productsData.push({ pid, title, price, location });
                 }
@@ -58,32 +58,33 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         const firstFiltered = filterFunction.titleFiltering(data)
 
         console.log("1차 필터링 : " + firstFiltered.length);
-
-
-         // 각 pid에 대해 순차적으로 상세 설명 페이지에 들어가 데이터 가져오기
-         const productDetails = [];
-         for (const product of firstFiltered) {
-             const pid = product.pid;
-             const productDetail = await getProductDetail(pid, browser);
-             if (productDetail) {
-                 productDetails.push(productDetail);
-             }
-         }
-
         
-        //2차 분류 - 예외 데이터 필터링 (게시글)
-        //2차 분류 - 예외 데이터 필터링 (게시글)
-        const secondFiltered = filterFunction.infoFiltering(productDetails);
 
-        console.log("2차 필터링 : " + secondFiltered.length)
+        // 각 pid에 대해 순차적으로 상세 설명 페이지에 들어가 데이터 가져오기
+        const productDetails = [];
+        for (const product of firstFiltered) {
+            const pid = product.pid;
+            const productDetail = await getProductDetail(pid, browser);
+            if (productDetail) {
+                productDetails.push(productDetail);
+            }
+        }
 
-        //소문자 변환
-        //소문자 변환
-        const productData = filterFunction.convertLowerCase(secondFiltered);
-        console.log('소문자 변환 : ' + productData.length)
+       
+       //2차 분류 - 예외 데이터 필터링 (게시글)
+       //2차 분류 - 예외 데이터 필터링 (게시글)
+       const secondFiltered = filterFunction.infoFiltering(productDetails);
+
+       console.log("2차 필터링 : " + secondFiltered.length)
+
+       //소문자 변환
+       //소문자 변환
+       const productData = filterFunction.convertLowerCase(secondFiltered);
+       console.log('소문자 변환 : ' + productData.length)
 
 
-        let filteredList = null;
+
+       let filteredList = null;
 
 
         //모델 분류
@@ -154,7 +155,7 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         //console.log(gptProductData)
 
         const saveData = filterFunction.deleteNullValue(gptProductData);
-        console.log('오류값 제거 루 : ' + aveData.length)
+        console.log('오류값 제거 후 : ' + saveData.length)
 
 
 
@@ -162,7 +163,7 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         saveData.forEach(item => {
             const { title, price, info, condition, assetName } = item;
             const insertQuery = 'INSERT INTO AssetsPriceInfo (AssetsName, TITLE, PRICE, INFO, CONDITIONS, PLATFORM, DATE) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const insertValues = [assetName, title, price, info.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, ''), condition, '중고나라', new Date()];
+            const insertValues = [assetName, title, price, info.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, ''), condition, '당근마켓', new Date()];
 
             mysql.query(insertQuery, insertValues, (error, results, fields) => {
                 if (error) throw error;
@@ -174,26 +175,30 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         console.log('MYSQL DB SAVE OK!');
 
 
+
     })();
+
+
+
 
 
     //해당 pid의 상세 페이지 크롤링 코드
     async function getProductDetail(pid, browser) {
         const page = await browser.newPage();
-        const productDetailUrl = `https://web.joongna.com/product/${pid}`;
+        const productDetailUrl = `https://www.daangn.com/articles/${pid}`;
 
         try {
             await page.goto(productDetailUrl);
 
             // 페이지가 로드될 때까지 대기
-            await page.waitForSelector('.px-5');  // 실제 상세 페이지의 선택자로 수정
+            await page.waitForSelector('#content');  // 실제 상세 페이지의 선택자로 수정
 
             // 필요한 데이터를 추출하거나 다른 작업 수행
             const productDetail = await page.evaluate(() => {
                 // 상세 페이지에서 필요한 데이터 추출
-                const title = document.querySelector('.mr-2').textContent.trim();  // 제목에 해당하는 선택자로 수정
-                const price = parseInt(document.querySelector('div.text-heading').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
-                const info = document.querySelector('p.text-jnGray-900').textContent.trim();
+                const title = document.querySelector('#article-title').textContent.trim();  // 제목에 해당하는 선택자로 수정
+                const price = parseInt(document.querySelector('#article-price').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
+                const info = document.querySelector('#article-detail').textContent.trim();
 
                 return { title, price, info };
             });
@@ -206,6 +211,5 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
             await page.close();
         }
     }
-   
 
-}
+};

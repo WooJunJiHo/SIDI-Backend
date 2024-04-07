@@ -8,22 +8,23 @@ const bodyParser = require('body-parser');
 const scrapingBJFunction = require('./utils/scrapingBJAssets');
 const scrapingJNFunction = require('./utils/scrapingJNAssets');
 const scrapingDGFunction = require('./utils/scrapingDGAssets');
+const { is } = require('./node_modules/cheerio/lib/api/traversing');
 
 
 
 //번개장터 크롤링 아이템
 let assetName = '맥북';
 const iPhone = '아이폰';
-const galaxyS20 = '갤럭시S20'
-const galaxyS21 = '갤럭시S21'
-const galaxyS22 = '갤럭시S22'
-const galaxyS23 = '갤럭시S23'
-const galaxyS24 = '갤럭시S24'
-const galaxyZ = '갤럭시Z'
+const galaxyS20 = '갤럭시S20';
+const galaxyS21 = '갤럭시S21';
+const galaxyS22 = '갤럭시S22';
+const galaxyS23 = '갤럭시S23';
+const galaxyS24 = '갤럭시S24';
+const galaxyZ = '갤럭시Z';
 
 const iPad = '아이패드';
 
-const macBook = '맥북'
+const macBook = '맥북';
 
 
 
@@ -45,30 +46,41 @@ connection.connect();
 
 
 
+let isFirstTime = true;
 
-//번개장터 크롤링 2시간 간격으로 주기적으로 실행
-// setInterval(() => {
-//     scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
-// }, 10 * 60 * 1000); // 2시간
+
+//번개장터, 중고나라 크롤링 1시간 간격(총 2시간)으로 주기적으로 실행
+setInterval(() => {
+
+    if(isFirstTime) {
+        scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+        isFirstTime = false;
+    } else {
+        scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+        isFirstTime = true;
+    }
+
+}, 10 * 60 * 1000); // 2시간
+
 
 
 //번개장터
 //번개장터
-//scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
-//conditionTraining.conditionTraining();
+scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 
-//중고나라
-//중고나라
-//scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+
+// 중고나라
+// 중고나라
+// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 
 
 //당근마켓
 //당근마켓
-scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName);
+// scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 

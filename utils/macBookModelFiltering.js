@@ -22,7 +22,7 @@ const macBookModelFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = '맥북'
+            item.assetName = 'MacBook'
         }
         return shouldInclude;
     })
@@ -39,7 +39,7 @@ const airFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 에어'
+            item.assetName = item.assetName + ' Air'
         }
         return shouldInclude;
     });
@@ -61,7 +61,7 @@ const proFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 프로'
+            item.assetName = item.assetName + ' Pro'
         }
         return shouldInclude;
     });
@@ -75,7 +75,7 @@ const maxFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 맥스'
+            item.assetName = item.assetName + ' Max'
         }
         return shouldInclude;
     });
@@ -136,7 +136,7 @@ const thirteenFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 13인치'
+            item.assetName = item.assetName + ' 13Inch'
         }
         return shouldInclude;
     });
@@ -158,7 +158,7 @@ const fourteenFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 14인치'
+            item.assetName = item.assetName + ' 14Inch'
         }
         return shouldInclude;
     });
@@ -180,7 +180,7 @@ const sixteenFiltering = function (data) {
             item.title.includes(keyword)
         );
         if (shouldInclude === true) {
-            item.assetName = item.assetName + ' 16인치'
+            item.assetName = item.assetName + ' 16Inch'
         }
         return shouldInclude;
     });
