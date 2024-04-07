@@ -98,8 +98,8 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         let filteredList = null;
 
 
-        //아이폰 필터링
-        //아이폰 필터링
+        //모델 분류
+        //모델 분류
         if(assetName === '갤럭시S20') {
             filteredList = galaxyModelFilterFunction.galaxyS20Filtering(productData);
             console.log('갤럭시S20 필터링 : ' + filteredList.length)
@@ -138,8 +138,8 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
             //console.log(iPadList)
         }
 
-        console.log(filteredList.length)
-        console.log(filteredList)
+        //console.log(filteredList.length)
+        //console.log(filteredList)
 
 
         //GPT 상품 상태 분류
@@ -161,11 +161,11 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         }
         const gptProductData = await gptLoad();
 
-        console.log(gptProductData.length)
+        console.log('GPT 상태분류 : ' + gptProductData.length)
         //console.log(gptProductData)
 
         const saveData = filterFunction.deleteNullValue(gptProductData);
-        console.log(saveData.length)
+        console.log('오류값 제거 후 : ' + saveData.length)
 
 
 
@@ -204,10 +204,9 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
                 // 상세 페이지에서 필요한 데이터 추출
                 const title = document.querySelector('.ProductSummarystyle__Name-sc-oxz0oy-4.gYcooF').textContent.trim();  // 제목에 해당하는 선택자로 수정
                 const price = parseInt(document.querySelector('.ProductSummarystyle__Price-sc-oxz0oy-6.dJuwUw').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
-                const value = document.querySelector('.ProductSummarystyle__Value-sc-oxz0oy-19.gXkArV').textContent.trim();
                 const info = document.querySelector('.ProductInfostyle__DescriptionContent-sc-ql55c8-3.eJCiaL > p').textContent.trim();
 
-                return { title, price, value, info };
+                return { title, price, info };
             });
 
             return productDetail;
