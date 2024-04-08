@@ -3,6 +3,7 @@ const http = require('http');
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 //크롤링
 const scrapingBJFunction = require('./utils/scrapingBJAssets');
@@ -13,7 +14,7 @@ const { is } = require('./node_modules/cheerio/lib/api/traversing');
 
 
 //번개장터 크롤링 아이템
-let assetName = '맥북';
+let assetName = '아이폰';
 const iPhone = '아이폰';
 const galaxyS20 = '갤럭시S20';
 const galaxyS21 = '갤럭시S21';
@@ -50,30 +51,30 @@ let isFirstTime = true;
 
 
 //번개장터, 중고나라 크롤링 1시간 간격(총 2시간)으로 주기적으로 실행
-setInterval(() => {
+// setInterval(() => {
 
-    if(isFirstTime) {
-        scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
-        isFirstTime = false;
-    } else {
-        scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
-        isFirstTime = true;
-    }
+//     if (isFirstTime) {
+//         scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+//         isFirstTime = false;
+//     } else {
+//         scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+//         isFirstTime = true;
+//     }
 
-}, 10 * 60 * 1000); // 2시간
+// }, 5 * 60 * 1000); // 2시간
 
 
 
 //번개장터
 //번개장터
-scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+//scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 
 
 // 중고나라
 // 중고나라
-// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+//scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
 
@@ -106,6 +107,19 @@ app.get('/getInfo', (req, res) => {
     });
 });
 
+
+
+
+//크롤링 데이터 로드
+app.get('/getScrapingAssets', (req, res) => {
+    connection.query('SELECT * FROM AssetsPriceInfo', (error, results, fields) => {
+        if (error) throw error;
+        res.json(results);
+    });
+});
+
+
+
 // 로그인 확인
 app.post('/fetchLogin', (req, res) => {
     const { nickname, email, profileImg } = req.body;
@@ -115,7 +129,7 @@ app.post('/fetchLogin', (req, res) => {
         if (error) {
             throw error;
         }
-        
+
         if (results.length > 0) {
             // 계정이 존재하는 경우
             res.json({ nickname, email, profileImg, userID: results[0].UserID });
@@ -129,7 +143,14 @@ app.post('/fetchLogin', (req, res) => {
                     throw error;
                 }
                 // 회원가입 완료 응답
-                res.json('회원가입 완료');
+                console.log('회원가입 완료');
+            });
+
+            connection.query(`SELECT * FROM User WHERE EMAIL=${mysql.escape(email)}`, (error, results, fields) => {
+                if (error) {
+                    throw error;
+                }
+                res.json({ nickname, email, profileImg, userID: results[0].UserID });
             });
         }
     });

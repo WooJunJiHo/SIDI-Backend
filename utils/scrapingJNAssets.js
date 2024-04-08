@@ -154,7 +154,7 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         //console.log(gptProductData)
 
         const saveData = filterFunction.deleteNullValue(gptProductData);
-        console.log('오류값 제거 루 : ' + aveData.length)
+        console.log('오류값 제거 후 : ' + saveData.length)
 
 
 
