@@ -41,6 +41,11 @@ const infoFilterKeywords = [
 
 
 
+//특수문자 제거
+//특수문자 제거
+const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+
+
 //1차 분류 - 예외 데이터 필터링 (제목)
 //1차 분류 - 예외 데이터 필터링 (제목)
 
@@ -124,6 +129,31 @@ exports.deleteNullValue = function (data) {
         }
     })
 
+    return filteredData;
+}
+
+
+//특수문자 제거
+//특수문자 제거
+exports.deleteSpecialChar = function (data) {
+    const filteredData = data.filter(item => {
+        item.title = item.title.replace(reg, '');
+        item.info = item.info.replace(reg, '');
+        return item;
+    })
+    return filteredData;
+}
+
+
+
+//같은 게시글 필터링
+//같은 게시글 필터링
+exports.filterSamePost = function (data) {
+    const filteredData = data.filter((item, index, self) =>
+        index === self.findIndex((t) => (
+            t.info === item.info
+        ))
+    )
     return filteredData;
 }
 
