@@ -5,6 +5,9 @@ const filterFunction = require('./scrapingFiltering');
 const iPhoneModelFilterFunction = require('./iPhoneModelFiltering');
 const galaxyModelFilterFunction = require('./galaxySModelFiltering');
 const galaxyZModelFilterFunction = require('./galaxyZModelFiltering');
+const galaxyBookFilterFunction = require('./galaxyBookModelFiltering');
+const galaxyTabSFilterFunction = require('./galaxyTabSModelFiltering');
+
 const iPadModelFilterFunction = require('./iPadModelFiltering');
 const macBookModelFilterFunction = require('./macBookModelFiltering');
 const { filter } = require('../node_modules/cheerio/lib/api/traversing');
@@ -81,6 +84,7 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
         //소문자 변환
         const productData = filterFunction.convertLowerCase(secondFiltered);
         console.log('소문자 변환 : ' + productData.length)
+        //console.log(productData)
 
 
         let filteredList = null;
@@ -108,19 +112,73 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
             filteredList = galaxyModelFilterFunction.galaxyS24Filtering(productData);
             console.log('갤럭시S24 필터링 : ' + filteredList.length)
             //console.log(galaxyS24List)
-        } else if (assetName === '갤럭시Z') {
+        } 
+
+        else if (assetName === '갤럭시Z') {
             filteredList = galaxyZModelFilterFunction.galaxyZFiltering(productData);
             console.log('갤럭시Z 필터링 : ' + filteredList.length)
             //console.log(galaxyS24List)
-        } else if (assetName === '아이폰') {
-            filteredList = iPhoneModelFilterFunction.iPhoneFiltering(productData);
+        } 
+
+        else if (assetName === '갤럭시북') {
+            filteredList = galaxyBookFilterFunction.galaxyBookFiltering(productData);
+            console.log('갤럭시북 필터링 : ' + filteredList.length)
+            //console.log(galaxyS24List)
+        } 
+
+        else if (assetName === '갤럭시탭S6') {
+            filteredList = galaxyTabSFilterFunction.galaxyTabS6Filtering(productData);
+            console.log('갤럭시탭S6 필터링 : ' + filteredList.length)
+            //console.log(galaxyS24List)
+        } else if (assetName === '갤럭시탭S7') {
+            filteredList = galaxyTabSFilterFunction.galaxyTabS7Filtering(productData);
+            console.log('갤럭시탭S7 필터링 : ' + filteredList.length)
+            //console.log(galaxyS24List)
+        } else if (assetName === '갤럭시탭S8') {
+            filteredList = galaxyTabSFilterFunction.galaxyTabS8Filtering(productData);
+            console.log('갤럭시탭S8 필터링 : ' + filteredList.length)
+            //console.log(galaxyS24List)
+        } else if (assetName === '갤럭시탭S9') {
+            filteredList = galaxyTabSFilterFunction.galaxyTabS9Filtering(productData);
+            console.log('갤럭시탭S9 필터링 : ' + filteredList.length)
+            //console.log(galaxyS24List)
+        }
+        
+
+
+        else if (assetName === '아이폰se') {
+            filteredList = iPhoneModelFilterFunction.iPhoneSEFiltering(productData);
             console.log('아이폰 필터링 : ' + filteredList.length)
             //console.log(iPhoneList)
-        } else if (assetName === '아이패드') {
+        } else if (assetName === '아이폰11') {
+            filteredList = iPhoneModelFilterFunction.iPhone11Filtering(productData);
+            console.log('아이폰11 필터링 : ' + filteredList.length)
+            //console.log(iPhoneList)
+        } else if (assetName === '아이폰12') {
+            filteredList = iPhoneModelFilterFunction.iPhone12Filtering(productData);
+            console.log('아이폰12 필터링 : ' + filteredList.length)
+            //console.log(iPhoneList)
+        } else if (assetName === '아이폰13') {
+            filteredList = iPhoneModelFilterFunction.iPhone13Filtering(productData);
+            console.log('아이폰13 필터링 : ' + filteredList.length)
+            //console.log(iPhoneList)
+        } else if (assetName === '아이폰14') {
+            filteredList = iPhoneModelFilterFunction.iPhone14Filtering(productData);
+            console.log('아이폰14 필터링 : ' + filteredList.length)
+            //console.log(iPhoneList)
+        } else if (assetName === '아이폰15') {
+            filteredList = iPhoneModelFilterFunction.iPhone15Filtering(productData);
+            console.log('아이폰15 필터링 : ' + filteredList.length)
+            //console.log(iPhoneList)
+        }
+
+        else if (assetName === '아이패드') {
             filteredList = iPadModelFilterFunction.iPadFiltering(productData);
             console.log('아이패드 필터링 : ' + filteredList.length)
             //console.log(iPadList)
-        } else if (assetName === '맥북') {
+        } 
+
+        else if (assetName === '맥북') {
             filteredList = macBookModelFilterFunction.macBookFiltering(productData);
             console.log('맥북 필터링 : ' + filteredList.length)
             //console.log(iPadList)
@@ -128,6 +186,20 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
 
         //console.log('필터링 결과 : ' + filteredList.length)
         //console.log(filteredList)
+
+
+        //특수문자 제거
+        filteredList = filterFunction.deleteSpecialChar(filteredList);
+
+        console.log('특수문자 제거 후 : ' + filteredList.length)
+        //console.log(filteredList)
+
+
+
+        //같은 게시글 제거
+        filteredList = filterFunction.filterSamePost(filteredList);
+        console.log('중복 제거 후 : ' + filteredList.length)
+        console.log(filteredList)
 
 
 
@@ -191,7 +263,7 @@ exports.scrapingJN = async function jungna(mysql, axios, openaiApiKey, assetName
             // 필요한 데이터를 추출하거나 다른 작업 수행
             const productDetail = await page.evaluate(() => {
                 // 상세 페이지에서 필요한 데이터 추출
-                const title = document.querySelector('.mr-2').textContent.trim();  // 제목에 해당하는 선택자로 수정
+                const title = document.querySelector('h1.mr-2').textContent.trim();  // 제목에 해당하는 선택자로 수정
                 const price = parseInt(document.querySelector('div.text-heading').textContent.trim().replace(/,/gi, '').replace(/원/gi, ''));  // 설명에 해당하는 선택자로 수정
                 const info = document.querySelector('p.text-jnGray-900').textContent.trim();
 

@@ -13,15 +13,32 @@ const { is } = require('./node_modules/cheerio/lib/api/traversing');
 
 
 
-//번개장터 크롤링 아이템
-let assetName = '아이폰';
-const iPhone = '아이폰';
+//크롤링 아이템
+let assetName = '아이폰se';
+
 const galaxyS20 = '갤럭시S20';
 const galaxyS21 = '갤럭시S21';
 const galaxyS22 = '갤럭시S22';
 const galaxyS23 = '갤럭시S23';
 const galaxyS24 = '갤럭시S24';
+
 const galaxyZ = '갤럭시Z';
+
+const galaxyBook = '갤럭시북';
+
+const galaxyTabS6 = '갤럭시탭S6';
+const galaxyTabS7 = '갤럭시탭S7';
+const galaxyTabS8 = '갤럭시탭S8';
+const galaxyTabS9 = '갤럭시탭S9';
+
+
+
+const iPhoneSE = '아이폰se';
+const iPhone11 = '아이폰11';
+const iPhone12 = '아이폰12';
+const iPhone13 = '아이폰13';
+const iPhone14 = '아이폰14';
+const iPhone15 = '아이폰15';
 
 const iPad = '아이패드';
 
