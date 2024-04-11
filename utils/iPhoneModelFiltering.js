@@ -246,36 +246,84 @@ const normalFiltering = function (data) {
 
 
 
-exports.iPhoneFiltering = function (data) {
-
+exports.iPhoneSEFiltering = function (data) {
     const iPhoneSE1List = iPhoneSE1Filtering(data);
     const iPhoneSE2List = iPhoneSE2Filtering(data);
     const iPhoneSE3List = iPhoneSE3Filtering(data);
 
+    const filteredList = [];
+    const combinedList = filteredList.concat(
+        iPhoneSE1List, iPhoneSE2List, iPhoneSE3List
+    );
+    const dataList = combinedList.filter(item => item !== null);
+    return dataList;
+}
+
+
+exports.iPhone11Filtering = function (data) {
     const iPhone11List = iPhone11Filtering(data);
     const iPhone11MaxList = maxFiltering(iPhone11List);
     const iPhone11ProList = proFiltering(iPhone11List);
     const iPhone11NormalList = normalFiltering(iPhone11List);
 
+    const filteredList = [];
+    const combinedList = filteredList.concat(
+        iPhone11MaxList, iPhone11ProList, iPhone11NormalList
+    );
+    const dataList = combinedList.filter(item => item !== null);
+    return dataList;
+}
+
+
+exports.iPhone12Filtering = function (data) {
     const iPhone12List = iPhone12Filtering(data);
     const iPhone12MaxList = maxFiltering(iPhone12List);
     const iPhone12ProList = proFiltering(iPhone12List);
     const iPhone12MiniList = miniFiltering(iPhone12List);
     const iPhone12NormalList = normalFiltering(iPhone12List);
 
+    const filteredList = [];
+    const combinedList = filteredList.concat(
+        iPhone12MaxList, iPhone12ProList, iPhone12MiniList, iPhone12NormalList
+    );
+    const dataList = combinedList.filter(item => item !== null);
+    return dataList;
+}
 
+
+exports.iPhone13Filtering = function (data) {
     const iPhone13List = iPhone13Filtering(data);
     const iPhone13MaxList = maxFiltering(iPhone13List);
     const iPhone13ProList = proFiltering(iPhone13List);
     const iPhone13MiniList = miniFiltering(iPhone13List);
     const iPhone13NormalList = normalFiltering(iPhone13List);
 
+    const filteredList = [];
+    const combinedList = filteredList.concat(
+        iPhone13MaxList, iPhone13ProList, iPhone13MiniList, iPhone13NormalList
+    );
+    const dataList = combinedList.filter(item => item !== null);
+    return dataList;
+}
+
+
+exports.iPhone14Filtering = function (data) {
     const iPhone14List = iPhone14Filtering(data);
     const iPhone14MaxList = maxFiltering(iPhone14List);
     const iPhone14ProList = proFiltering(iPhone14List);
     const iPhone14PlusList = plusFiltering(iPhone14List);
     const iPhone14NormalList = normalFiltering(iPhone14List);
 
+    const filteredList = [];
+    const combinedList = filteredList.concat(
+        iPhone14MaxList, iPhone14ProList, iPhone14PlusList, iPhone14NormalList
+    );
+    const dataList = combinedList.filter(item => item !== null);
+    return dataList;
+}
+
+
+exports.iPhone15Filtering = function (data) {
     const iPhone15List = iPhone15Filtering(data);
     const iPhone15MaxList = maxFiltering(iPhone15List);
     const iPhone15ProList = proFiltering(iPhone15List);
@@ -283,18 +331,9 @@ exports.iPhoneFiltering = function (data) {
     const iPhone15NormalList = normalFiltering(iPhone15List);
 
     const filteredList = [];
-
     const combinedList = filteredList.concat(
-        iPhoneSE1List, iPhoneSE2List, iPhoneSE3List,
-        iPhone11MaxList, iPhone11ProList, iPhone11NormalList,
-        iPhone12MaxList, iPhone12ProList, iPhone12MiniList, iPhone12NormalList,
-        iPhone13MaxList, iPhone13ProList, iPhone13MiniList, iPhone13NormalList,
-        iPhone14MaxList, iPhone14ProList, iPhone14PlusList, iPhone14NormalList,
         iPhone15MaxList, iPhone15ProList, iPhone15PlusList, iPhone15NormalList
     );
-
     const dataList = combinedList.filter(item => item !== null);
-
     return dataList;
-
 }
