@@ -10,6 +10,6 @@ node_modules
 
 #모델 학습
 datasets
-utils/modelTrainingUtils
-utils/conditionFilteringTraining.js
+PythonFlask/models/
+
 
