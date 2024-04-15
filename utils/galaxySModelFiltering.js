@@ -236,7 +236,7 @@ exports.galaxyS23Filtering = function (data) {
 }
 
 
-exports.galaxyS22Filtering = function (data) {
+exports.galaxyS24Filtering = function (data) {
 
     const galaxyS24List = galaxyS24Filtering(data)
 

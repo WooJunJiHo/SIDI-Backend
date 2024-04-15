@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 //필터링 함수
 const filterFunction = require('./scrapingFiltering');
 const iPhoneModelFilterFunction = require('./iPhoneModelFiltering');
-const galaxyModelFilterFunction = require('./galaxySModelFiltering');
+const galaxySModelFilterFunction = require('./galaxySModelFiltering');
 const galaxyZModelFilterFunction = require('./galaxyZModelFiltering');
 const galaxyBookFilterFunction = require('./galaxyBookModelFiltering');
 const galaxyTabSFilterFunction = require('./galaxyTabSModelFiltering');
@@ -25,12 +25,13 @@ const conditionFunction = require('./conditionFiltering');
 //4. 게시글 필터링
 
 
-let timeSet = 1;
 
 
 
 exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetName) {
-    console.log('번개장터 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
+    
+    console.log('번개장터 크롤링 '  + new Date());
+    console.log('모델 : ' + assetName);
 
 
     const url = `https://m.bunjang.co.kr/search/products?q=${assetName}`;
@@ -94,7 +95,7 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         //소문자 변환
         const productData = filterFunction.convertLowerCase(secondFiltered);
         console.log('소문자 변환 : ' + productData.length)
-        //console.log(productData)
+        // console.log(productData)
     
 
 
@@ -105,23 +106,23 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
         //모델 분류
         //모델 분류
         if(assetName === '갤럭시S20') {
-            filteredList = galaxyModelFilterFunction.galaxyS20Filtering(productData);
+            filteredList = galaxySModelFilterFunction.galaxyS20Filtering(productData);
             console.log('갤럭시S20 필터링 : ' + filteredList.length)
             //console.log(galaxyS20List)
         } else if (assetName === '갤럭시S21'){
-            filteredList = galaxyModelFilterFunction.galaxyS21Filtering(productData);
+            filteredList = galaxySModelFilterFunction.galaxyS21Filtering(productData);
             console.log('갤럭시S21 필터링 : ' + filteredList.length)
             //console.log(galaxyS21List)
         } else if (assetName === '갤럭시S22'){
-            filteredList = galaxyModelFilterFunction.galaxyS22Filtering(productData);
+            filteredList = galaxySModelFilterFunction.galaxyS22Filtering(productData);
             console.log('갤럭시S22 필터링 : ' + filteredList.length)
             //console.log(galaxyS22List)
         } else if (assetName === '갤럭시S23'){
-            filteredList = galaxyModelFilterFunction.galaxyS23Filtering(productData);
+            filteredList = galaxySModelFilterFunction.galaxyS23Filtering(productData);
             console.log('갤럭시S23 필터링 : ' + filteredList.length)
             //console.log(galaxyS23List)
-        } else if (assetName === '갤럭시 S24'){
-            filteredList = galaxyModelFilterFunction.galaxyS24Filtering(productData);
+        } else if (assetName === '갤럭시S24'){
+            filteredList = galaxySModelFilterFunction.galaxyS24Filtering(productData);
             console.log('갤럭시S24 필터링 : ' + filteredList.length)
             //console.log(galaxyS24List)
         } 
@@ -232,10 +233,25 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
                 return gptJSONData;
             }
         }
-        const gptProductData = await gptLoad();
+        let gptProductData = await gptLoad();
 
-        console.log('GPT 상태분류 : ' + gptProductData.length)
-        //console.log(gptProductData)
+        let attempts = 0;
+
+        while(!gptProductData && attempts < 5) { //5번까지 재시도
+            gptProductData = await gptLoad(); // 데이터 로드 시도
+            attempts++; // 시도 횟수 증가
+            if (gptProductData) {
+                console.log('GPT 상태분류 : ' + gptProductData.length);
+                //console.log(gptProductData);
+            } else {
+                console.log('GPT 상태분류 오류, 재시도 중...');
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기 후 재시도
+            }
+        }
+
+        if (!gptProductData) {
+            console.log('GPT 상태분류 데이터 로드 실패');
+        }
 
         const saveData = filterFunction.deleteNullValue(gptProductData);
         console.log('오류값 제거 후 : ' + saveData.length)
@@ -256,7 +272,7 @@ exports.scrapingBJ = async function bunjang(mysql, axios, openaiApiKey, assetNam
 
         await browser.close();
 
-        console.log('MYSQL DB SAVE OK!');
+        console.log('MYSQL DB SAVE OK!\n');
     })();
 
 

@@ -20,11 +20,10 @@ const conditionFunction = require('./conditionFiltering');
 
 
 
-let timeSet = 1;
-
 exports.scrapingDG = async function jungna(mysql, axios, openaiApiKey, assetName) {
 
-    console.log('당근마켓 크롤링 ' + `[${timeSet++} 회차] ` + new Date());
+    console.log('당근마켓 크롤링'  + new Date());
+    console.log('모델 : ' + assetName);
 
     const url = `https://www.daangn.com/search/${assetName}/`;
     const componentSelector = '.flea-market-article-link';  // 상품을 나타내는 클래스 선택자로 수정
@@ -193,13 +192,13 @@ exports.scrapingDG = async function jungna(mysql, axios, openaiApiKey, assetName
         filteredList = filterFunction.deleteSpecialChar(filteredList);
 
         console.log('특수문자 제거 : ' + filteredList.length)
-        console.log(filteredList)
+        //console.log(filteredList)
 
 
         //같은 게시글 제거
         filteredList = filterFunction.filterSamePost(filteredList);
         console.log('중복 제거 후 : ' + filteredList.length)
-       //console.log(filteredList)
+       console.log(filteredList)
 
 
 

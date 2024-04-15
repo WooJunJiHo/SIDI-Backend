@@ -14,7 +14,6 @@ const { is } = require('./node_modules/cheerio/lib/api/traversing');
 
 
 //크롤링 아이템
-let assetName = '아이폰se';
 
 const galaxyS20 = '갤럭시S20';
 const galaxyS21 = '갤럭시S21';
@@ -45,6 +44,9 @@ const iPad = '아이패드';
 const macBook = '맥북';
 
 
+let assetName = [galaxyS20, galaxyS21, galaxyS22, galaxyS23, galaxyS24, galaxyZ, galaxyBook, galaxyTabS6, galaxyTabS7, galaxyTabS8, galaxyTabS9, iPhoneSE, iPhone11, iPhone12, iPhone13, iPhone14, iPhone15, iPad, macBook];
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -62,9 +64,35 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
+let searchingAsset = 0;
+let searchingPlatform = 0;
+
+//키워드 한번씩 크롤링
+setInterval(() => {
+
+    if (searchingAsset == assetName.length) {
+        process.exit();
+    } else {
+        if(searchingPlatform == 0) {
+            //번개장터
+            scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+            searchingPlatform = 1;
+        } else if (searchingPlatform == 1) {
+            //중고나라
+            scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+            searchingPlatform = 0;
+            searchingAsset++;
+        } //else if (searchingPlatform == 2) {
+            //당근마켓
+            //scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+            //searchingPlatform = 0;
+            //searchingAsset++;
+        //}
+    }
+
+}, 5 * 60 * 1000); // 5분
 
 
-let isFirstTime = true;
 
 
 //번개장터, 중고나라 크롤링 1시간 간격(총 2시간)으로 주기적으로 실행
@@ -84,14 +112,14 @@ let isFirstTime = true;
 
 //번개장터
 //번개장터
-//scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
+// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[4]);
 
 
 
 
 // 중고나라
 // 중고나라
-//scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
+// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[3]);
 
 
 
@@ -101,9 +129,6 @@ let isFirstTime = true;
 // scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName);
 
 
-
-//특수문자 제거 
-//.replace(/[^\w\s가-힣ㄱ-ㅎㅏ-ㅣ]/g, '')
 
 
 
