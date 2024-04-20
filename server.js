@@ -112,14 +112,14 @@ setInterval(() => {
 
 //번개장터
 //번개장터
-// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[4]);
+// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[14]);
 
 
 
 
 // 중고나라
 // 중고나라
-// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[3]);
+// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[13]);
 
 
 
