@@ -117,12 +117,16 @@ app.get('/getColor', (req, res) => {
     });
 });
 
-app.get('/getInfo', (req, res) => {
-    connection.query('SELECT * FROM AssetsMoreInfo', (error, results, fields) => {
+app.post('/getInfo', (req, res) => {
+    const { index, name } = req.body;
+
+    connection.query(`SELECT * FROM AssetsMoreInfo WHERE RESULT = ${mysql.escape(name)}`, (error, results, fields) => {
         if (error) throw error;
         res.json(results);
     });
 });
+
+
 
 
 
@@ -198,7 +202,7 @@ app.post('/fetchUserAssets', (req, res) => {
 });
 
 
-const port = process.env.REACT_APP_PORT || 3000;
+const port = 3000;
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
