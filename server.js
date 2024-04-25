@@ -68,29 +68,29 @@ let searchingAsset = 0;
 let searchingPlatform = 0;
 
 //키워드 한번씩 크롤링
-setInterval(() => {
+// setInterval(() => {
 
-    if (searchingAsset == assetName.length) {
-        process.exit();
-    } else {
-        if(searchingPlatform == 0) {
-            //번개장터
-            scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
-            searchingPlatform = 1;
-        } else if (searchingPlatform == 1) {
-            //중고나라
-            scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
-            searchingPlatform = 0;
-            searchingAsset++;
-        } //else if (searchingPlatform == 2) {
-            //당근마켓
-            //scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
-            //searchingPlatform = 0;
-            //searchingAsset++;
-        //}
-    }
+//     if (searchingAsset == assetName.length) {
+//         process.exit();
+//     } else {
+//         if(searchingPlatform == 0) {
+//             //번개장터
+//             scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+//             searchingPlatform = 1;
+//         } else if (searchingPlatform == 1) {
+//             //중고나라
+//             scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+//             searchingPlatform = 0;
+//             searchingAsset++;
+//         } //else if (searchingPlatform == 2) {
+//             //당근마켓
+//             //scrapingDGFunction.scrapingDG(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+//             //searchingPlatform = 0;
+//             //searchingAsset++;
+//         //}
+//     }
 
-}, 5 * 60 * 1000); // 5분
+// }, 5 * 60 * 1000); // 5분
 
 
 
@@ -112,7 +112,7 @@ setInterval(() => {
 
 //번개장터
 //번개장터
-// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[14]);
+// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[13]);
 
 
 
@@ -134,7 +134,7 @@ setInterval(() => {
 
 
 
-
+//색상 정보
 app.get('/getColor', (req, res) => {
     connection.query('SELECT * FROM AssetsMoreColor', (error, results, fields) => {
         if (error) throw error;
@@ -142,6 +142,7 @@ app.get('/getColor', (req, res) => {
     });
 });
 
+//자산 정보
 app.post('/getInfo', (req, res) => {
     const { index, name } = req.body;
 
@@ -152,6 +153,38 @@ app.post('/getInfo', (req, res) => {
 });
 
 
+//사용자 등록 자산
+app.post('/addAsset', (req, res) => {
+    const { index, CATEGORY, COMPANY, MODEL, MORE, COLOR, RGB } = req.body;
+
+    const insertQuery = 'INSERT INTO Assets (COMPANY, MODEL, MORE, COLOR, CategoryID, DATE) VALUES (?, ?, ?, ?, ?, ?)';
+    const insertValues = [COMPANY, MODEL, MORE, COLOR, CATEGORY, new Date()];
+
+    connection.query(insertQuery, insertValues, (error, results, fields) => {
+        if (error) {
+            throw error;
+        }
+        // 삽입된 레코드의 ID 값을 가져오기 위해 SELECT LAST_INSERT_ID() 쿼리를 실행
+        connection.query('SELECT LAST_INSERT_ID()', (error, results, fields) => {
+            if (error) {
+                throw error;
+            }
+            const insertedId = results[0]['LAST_INSERT_ID()'];
+            res.json({ id: insertedId }); // 클라이언트에 삽입된 레코드의 ID를 응답으로 보냄
+        });
+    });
+})
+
+
+//QR 사용자 본인 자산 등록
+app.post('/updateQR', (req, res) => {
+    const { userID, assetID } = req.body;
+
+    connection.query(`UPDATE Assets SET UserID=${mysql.escape(userID)} WHERE AssetsID=${mysql.escape(assetID)}`, (error, results, fields) => {
+        if (error) throw error;
+        res.json(results);
+    });
+});
 
 
 

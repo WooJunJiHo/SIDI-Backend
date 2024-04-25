@@ -36,7 +36,7 @@ const iPhoneSE1Filtering = (data) => {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone SE 1'
+            item.assetName = 'Apple iPhone SE 1'
         }
         return shouldInclude;
     });
@@ -49,7 +49,7 @@ const iPhoneSE2Filtering = (data) => {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone SE 2'
+            item.assetName = 'Apple iPhone SE 2'
         }
         return shouldInclude;
     });
@@ -63,7 +63,7 @@ const iPhoneSE3Filtering = (data) => {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone SE 3'
+            item.assetName = 'Apple iPhone SE 3'
         }
         return shouldInclude;
     });
@@ -78,7 +78,7 @@ const iPhone11Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone 11'
+            item.assetName = 'Apple iPhone 11'
         }
         return shouldInclude;
     });
@@ -93,7 +93,7 @@ const iPhone12Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone 12'
+            item.assetName = 'Apple iPhone 12'
         }
         return shouldInclude;
     });
@@ -108,7 +108,7 @@ const iPhone13Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone 13'
+            item.assetName = 'Apple iPhone 13'
         }
         return shouldInclude;
     });
@@ -123,7 +123,7 @@ const iPhone14Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone 14'
+            item.assetName = 'Apple iPhone 14'
         }
         return shouldInclude;
     });
@@ -138,7 +138,7 @@ const iPhone15Filtering = function (data) {
             item.title.includes(keyword)
         );
         if(shouldInclude === true) {
-            item.assetName = 'iPhone 15'
+            item.assetName = 'Apple iPhone 15'
         }
         return shouldInclude;
     });
