@@ -119,7 +119,7 @@ let searchingPlatform = 0;
 
 // 중고나라
 // 중고나라
-// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[13]);
+// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[16]);
 
 
 
@@ -178,9 +178,9 @@ app.post('/addAsset', (req, res) => {
 
 //QR 사용자 본인 자산 등록
 app.post('/updateQR', (req, res) => {
-    const { userID, assetID } = req.body;
+    const { userID, assetID, price } = req.body;
 
-    connection.query(`UPDATE Assets SET UserID=${mysql.escape(userID)} WHERE AssetsID=${mysql.escape(assetID)}`, (error, results, fields) => {
+    connection.query(`UPDATE Assets SET UserID=${mysql.escape(userID)}, PRICE=${mysql.escape(price)} WHERE AssetsID=${mysql.escape(assetID)}`, (error, results, fields) => {
         if (error) throw error;
         res.json(results);
     });
