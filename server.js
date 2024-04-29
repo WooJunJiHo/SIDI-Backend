@@ -64,7 +64,7 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-let searchingAsset = 0;
+let searchingCount = 0;
 let searchingPlatform = 0;
 
 //키워드 한번씩 크롤링
@@ -75,11 +75,11 @@ setInterval(() => {
     } else {
         if(searchingPlatform == 0) {
             //번개장터
-            scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+            scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[searchingCount]);
             searchingPlatform = 1;
         } else if (searchingPlatform == 1) {
             //중고나라
-            scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[searchingAsset]);
+            scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[searchingCount]);
             searchingPlatform = 0;
             searchingAsset++;
         } //else if (searchingPlatform == 2) {
@@ -94,32 +94,16 @@ setInterval(() => {
 
 
 
-
-//번개장터, 중고나라 크롤링 1시간 간격(총 2시간)으로 주기적으로 실행
-// setInterval(() => {
-
-//     if (isFirstTime) {
-//         scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName);
-//         isFirstTime = false;
-//     } else {
-//         scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName);
-//         isFirstTime = true;
-//     }
-
-// }, 5 * 60 * 1000); // 2시간
-
-
-
 //번개장터
 //번개장터
-// scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[14]);
+scrapingBJFunction.scrapingBJ(connection, axios, process.env.OPENAI_KEY, assetName[14]);
 
 
 
 
 // 중고나라
 // 중고나라
-// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[13]);
+// scrapingJNFunction.scrapingJN(connection, axios, process.env.OPENAI_KEY, assetName[15]);
 
 
 
