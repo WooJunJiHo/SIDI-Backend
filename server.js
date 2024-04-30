@@ -4,6 +4,9 @@ const mysql = require('mysql');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
+
+
 
 //크롤링
 const scrapingBJFunction = require('./utils/scrapingBJAssets');
@@ -52,6 +55,7 @@ const app = express();
 const server = http.createServer(app);
 // JSON 파싱을 위한 미들웨어 추가
 app.use(bodyParser.json());
+app.use(cors());
 
 dotenv.config(); // dotenv를 사용하여 환경 변수 로드 (env)
 
